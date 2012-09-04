@@ -48,7 +48,7 @@
             </xsl:variable>
 
             <xsl:if test="$element">
-                <a href="{$root}classes/{substring($link, 2)}.html"><xsl:value-of select="." /></a>
+                <a href="{$root}classes/{$link}.html"><xsl:value-of select="." /></a>
             </xsl:if>
 
             <xsl:if test="not($element)">
@@ -108,7 +108,7 @@
         </tr>
     </xsl:template>
 
-    <xsl:template match="tag[@name = 'license' or @name = 'link' or @name = 'see' or @name = 'author']" mode="tabular">
+    <xsl:template match="tag[@name = 'license' or @name = 'link' or @name = 'author']" mode="tabular">
         <tr>
             <th><xsl:value-of select="@name"/></th>
             <td>
@@ -152,6 +152,12 @@
 
     <xsl:template match="namespace|package" mode="breadcrumb">
         <xsl:param name="active" select="'true'"/>
+        <xsl:if test="local-name(..) = local-name()">
+            <xsl:apply-templates select=".." mode="breadcrumb">
+                <xsl:with-param name="active" select="'false'" />
+            </xsl:apply-templates>
+            <span class="divider">\</span>
+        </xsl:if>
 
         <xsl:variable name="link">
             <xsl:call-template name="createLink">
@@ -159,17 +165,8 @@
             </xsl:call-template>
         </xsl:variable>
 
-        <xsl:if test="local-name(..) = local-name()">
-            <xsl:apply-templates select=".." mode="breadcrumb">
-                <xsl:with-param name="active" select="'false'" />
-            </xsl:apply-templates>
-        </xsl:if>
-
         <li>
             <xsl:if test="$active = 'true'"><xsl:attribute name="class">active</xsl:attribute></xsl:if>
-            <xsl:if test="local-name(..) = local-name()">
-                <span class="divider">\</span>
-            </xsl:if>
             <a href="{$root}{local-name()}s/{$link}.html"><xsl:value-of select="@name" /></a>
         </li>
     </xsl:template>
